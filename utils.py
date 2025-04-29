@@ -38,13 +38,15 @@ def load_alignments(path: str) -> List[str]:
     return char_to_num(tf.reshape(tf.strings.unicode_split(tokens, input_encoding='UTF-8'), (-1)))[1:]
 
 # Function to load data (video and alignment) for a given path
-def load_data(path: str): 
+import os
+
+def load_data(path: str, **kwargs): 
     path = bytes.decode(path.numpy())
     file_name = path.split('\\')[-1].split('.')[0]
     
-    # Construct paths using string concatenation instead of os.path.join
+    # Construct paths
     video_path = './data//s1//' + file_name + '.mpg'
-    alignment_path = './data/alignments/s1/' + file_name +'.align'
+    alignment_path = './data/alignments/s1/' + file_name + '.align'
     
     # Convert alignment path to absolute path
     actual_alignment_path = os.path.abspath(alignment_path)

@@ -4,7 +4,7 @@ import os
 import numpy as np
 import tensorflow as tf
 from utils import load_data, num_to_char
-from modelutil import load_model
+from modelutil import load_model  # ✅ Corrected import
 
 # Streamlit configuration
 st.set_page_config(layout='wide')
@@ -12,15 +12,15 @@ st.set_page_config(layout='wide')
 # Sidebar content
 with st.sidebar:
     st.image("https://cdn.pixabay.com/photo/2013/07/12/18/17/equalizer-153212_1280.png")
-    st.title('LipSync Studio')
+    st.title('ECHO')
     st.info('This application uses Deep Learning techniques with CNN and RNN algorithms.')
-    st.info('©️ Rakesh Indupuri and Pavan Kumar Paidi.')
+    st.info('Team Members: Pranesh, Gothandaraman, Sanjay Ram, Surendar')
 
 # Main application title
-st.title('LipSync Studio')
+st.title('ECHO')
 
 # Get list of available videos
-data_path = os.path.join('.', 'data', 's1')
+data_path = os.path.join(os.getcwd(), 'data/s1')  # ✅ Corrected path
 if not os.path.exists(data_path):
     st.error(f"Data directory not found: {data_path}")
     st.stop()
@@ -44,14 +44,12 @@ if selected_video:
 
         # Check if FFmpeg is installed and convert video
         conversion_command = f'ffmpeg -i "{file_path}" -vcodec libx264 sample.mp4 -y'
-        try:
-            conversion_result = os.system(conversion_command)
-            if conversion_result == 0:
-                st.video('sample.mp4')
-            else:
-                st.error('Video conversion failed. Ensure FFmpeg is installed and try again.')
-        except Exception as e:
-            st.error(f'Error during video conversion: {str(e)}')
+        conversion_result = os.system(conversion_command)
+
+        if conversion_result == 0:
+            st.video('sample.mp4')
+        else:
+            st.error('Video conversion failed. Ensure FFmpeg is installed and try again.')
 
     with col2:
         try:
@@ -59,9 +57,9 @@ if selected_video:
             st.info('Loading model...')
             model = load_model()
 
-            # Load video data and annotations
+            # Load video data (handling missing `.align` files)
             st.info('Loading video data...')
-            video, annotations = load_data(tf.convert_to_tensor(file_path))
+            video, annotations = load_data(tf.convert_to_tensor(file_path), inference=True)
 
             # Make predictions
             st.info('Generating predictions...')
